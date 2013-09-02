@@ -65,7 +65,7 @@ void readkey(FILE *fp,int *key){
 int findReplace(int oldChar, int *key)
 {
 	int i;
-	for(i = 0; i < 26; i++)
+	for(i = 0; i < 27; i++)
 	{
 		//printf("%d\n",key[i]);
 		if(key[i] == oldChar){
@@ -91,19 +91,23 @@ void decryptText(FILE *fp){
 		
 		int ch = text[pos];
 		int newChar = findReplace(ch,key);
-		if((newChar+97) == -41){newText[pos] = 32;}else{newText[pos] = newChar+97;}
-		//newText[pos] = newChar+97;
-		printf("%d ",newText[pos]);
-	//	printf("%c \n",newText[pos]);
+		if(newChar == 26){
+		  newText[pos] = 32;
+		}
+		else if((ch < 123) && (ch > 96) || ch == 32){
+		  newText[pos] = newChar+97;
+		}
+		else{
+		  newText[pos] = newChar;
+		}
 		pos++;
 	}
-	//printf("%s\n",newText);
+	printf("%s\n",newText);
 	int i;
 	for(i = 0; i < 26; i++){
-		printf("%d\t",key[i]);
-		printf("%c\n",key[i]);
+		//printf("%d\t",newText[i]);
+		//printf("%c\n",key[i]);
 	}
-	
 }
 int main(){
 	char fileName[] = "inputFile";
