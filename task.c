@@ -77,7 +77,6 @@ int findReplace(int oldChar, int *key)
 
 int findReplaceE(int oldChar, int *key)
 {
-	int i;
 	if(oldChar < 123 && oldChar > 96){
 		return key[oldChar-97];
 	}else if(oldChar == 32){
@@ -87,12 +86,11 @@ int findReplaceE(int oldChar, int *key)
 	return oldChar;
 }
 void encryptText(FILE *fp){
-	FILE *keyFileP = fopen("key","r");
-	char text[1500] = {0};
-	char newText[1500] = {0};
+	char text[6000] = {0};
+	char newText[6000] = {0};
 	int key[100] = {0};
 	readFile(fp,text);
-	readkey("key",key);
+	readkey("keyTwo",key);
 	printf("%s \n","Encrypting text...");
 	int pos = 0;
 	while(text[pos] != EOF)
@@ -110,7 +108,7 @@ void decryptText(FILE *fp){
 	char newText[6000] = {0};
 	int key[100] = {0};
 	readFile(fp,text);
-	readkey("key",key);
+	readkey("keyTwo",key);
 	printf("%s \n","finding char...");
 	int pos = 0;
 	while(text[pos] != EOF)
@@ -131,7 +129,7 @@ void decryptText(FILE *fp){
 	printf("%s\n",newText);
 }
 int main(){
-	char fileName[] = "inputFile";
+	char fileName[] = "inputFileE";
 	int list[27] = {0};
 	int totalChars = getCharacterFreq(fopen(fileName,"r"),list);
 	
@@ -146,7 +144,7 @@ int main(){
 	}
 	
 	decryptText(fopen(fileName,"r"));
-	encryptText(fopen("inputFileE","r"));
+	//encryptText(fopen("inputFileE","r"));
 	
 	return (0);
 }
