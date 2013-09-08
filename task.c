@@ -3,7 +3,7 @@
 void readFile(FILE *fp,char*);
 
 int getCharacterFreq(FILE *fp,int *list){
-	char string[1500] = {0};
+	char string[5000] = {0};
 	readFile(fp,string);
 	int totalChars = 0;
 	int pos = 0;
@@ -18,7 +18,7 @@ int getCharacterFreq(FILE *fp,int *list){
 		//space
 		else if(charNumber == -65){
 			list[26]++;
-		//	printf("%d\n", charNumber);
+			totalChars++;
 		}
 		
 		pos++;
@@ -36,7 +36,6 @@ void readFile(FILE *fp,char* string){
 		int ch = fgetc(fp);
 		while(ch != EOF)
 		{
-			//printf("%c",ch);
 			string[pos] = ch;
 			ch = fgetc(fp);
 			pos++;
@@ -45,50 +44,77 @@ void readFile(FILE *fp,char* string){
 	}
 	printf("%s\n","done!");
 }
-void readkey(FILE *fp,int *key){
+void readkey(char *fName,int *key){
+	FILE *fp = fopen(fName,"r");
 	int pos = 0;
-	printf("%s\n","reading key...");
+	printf("%s\t","reading key...");
+	printf("%s\n",fName);
 	if(fp != NULL)
 	{
 		int ch = fgetc(fp);
 		while(ch != EOF)
 		{
-			//printf("%c",ch);
 			key[pos] = ch;
 			ch = fgetc(fp);
 			pos++;
 		}
 		key[pos+1] = EOF;
 	}
-	printf("%s\n","done!");
+	printf("%s\t","key: ");
+	//printf("%s\n",key);
 }
 int findReplace(int oldChar, int *key)
 {
 	int i;
 	for(i = 0; i < 27; i++)
 	{
-		//printf("%d\n",key[i]);
 		if(key[i] == oldChar){
-		//	printf("%d\t",key[i]);
-		//	printf("%c\t",oldChar);
-		//	printf("%c\n",i+97);
 			return i;
 		}
 	}
 	return oldChar;
 }
-void decryptText(FILE *fp){
+
+int findReplaceE(int oldChar, int *key)
+{
+	int i;
+	if(oldChar < 123 && oldChar > 96){
+		return key[oldChar-97];
+	}else if(oldChar == 32){
+		return key[26];
+	}
+	
+	return oldChar;
+}
+void encryptText(FILE *fp){
 	FILE *keyFileP = fopen("key","r");
 	char text[1500] = {0};
 	char newText[1500] = {0};
 	int key[100] = {0};
 	readFile(fp,text);
-	readkey(keyFileP,key);
-	printf("%s \n","finding char");
+	readkey("key",key);
+	printf("%s \n","Encrypting text...");
 	int pos = 0;
 	while(text[pos] != EOF)
 	{
-		
+		int ch = text[pos];
+		int newChar = findReplaceE(ch,key);
+		newText[pos] = newChar;
+		pos++;
+	}
+	printf("%s\n",newText);
+}
+void decryptText(FILE *fp){
+	FILE *keyFileP = fopen("key","r");
+	char text[6000] = {0};
+	char newText[6000] = {0};
+	int key[100] = {0};
+	readFile(fp,text);
+	readkey("key",key);
+	printf("%s \n","finding char...");
+	int pos = 0;
+	while(text[pos] != EOF)
+	{
 		int ch = text[pos];
 		int newChar = findReplace(ch,key);
 		if(newChar == 26){
@@ -103,17 +129,13 @@ void decryptText(FILE *fp){
 		pos++;
 	}
 	printf("%s\n",newText);
-	int i;
-	for(i = 0; i < 26; i++){
-		//printf("%d\t",newText[i]);
-		//printf("%c\n",key[i]);
-	}
 }
 int main(){
 	char fileName[] = "inputFile";
 	int list[27] = {0};
 	int totalChars = getCharacterFreq(fopen(fileName,"r"),list);
 	
+	/*print freq list*/
 	int i;
 	for(i = 0; i < 27; i++){
 		float percent = (float)list[i] / (float)totalChars;
@@ -124,8 +146,7 @@ int main(){
 	}
 	
 	decryptText(fopen(fileName,"r"));
-	
-	//fclose(fp);
+	encryptText(fopen("inputFileE","r"));
 	
 	return (0);
 }
